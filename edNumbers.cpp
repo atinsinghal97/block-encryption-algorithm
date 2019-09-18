@@ -4,6 +4,8 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+#define ROTL8(x,shift) ((uint8_t) ((x) << (shift)) | ((x) >> (8 - (shift))))
+
 // Function to display the menu 
 void menu() 
 { 
@@ -13,7 +15,7 @@ void menu()
 } 
 
 // Function for P-Box
-void shuffle(bitset<32> b, bitset<32> &a)
+void pbox(bitset<32> b, bitset<32> &a)
 {	
 	a[0]=b[0];
 	a[1]=b[16];
@@ -49,7 +51,46 @@ void shuffle(bitset<32> b, bitset<32> &a)
 	a[31]=b[31];
 }
 
-//Function for Encryption/ Decryption
+// Function for S-Box
+void sbox(bitset<32> b, bitset<32> &a)
+{	
+	a[0]=b[30];
+	a[1]=b[3];
+	a[2]=b[19];
+	a[3]=b[1];
+	a[4]=b[31];
+	a[5]=b[8];
+	a[6]=b[14];
+	a[7]=b[16];
+	a[8]=b[5];
+	a[9]=b[25];
+	a[10]=b[18];
+	a[11]=b[27];
+	a[12]=b[26];
+	a[13]=b[29];
+	a[14]=b[6];
+	a[15]=b[23];
+	a[16]=b[7];
+	a[17]=b[24];
+	a[18]=b[10];
+	a[19]=b[2];
+	a[20]=b[21];
+	a[21]=b[20];
+	a[22]=b[28];
+	a[23]=b[15];
+	a[24]=b[17];
+	a[25]=b[9];
+	a[26]=b[12];
+	a[27]=b[11];
+	a[28]=b[22];
+	a[29]=b[13];
+	a[30]=b[0];
+	a[31]=b[4];
+}
+
+
+/*
+Function for Encryption/ Decryption
 bitset<32> cryptofy(bitset<32> input, bitset<32> key)
 {
 	bitset<32> bs;
@@ -60,32 +101,33 @@ bitset<32> cryptofy(bitset<32> input, bitset<32> key)
 	shuffle(bs,output);
 	return output;
 }
+*/
 
-/** 
-Function for Encryption
+ 
+//Function for Encryption
 bitset<32> encrypt(bitset<32> input, bitset<32> key)
 {
 	bitset<32> bs;
-	shuffle(input,bs);
+	pbox(input,bs);
 	key.flip();
 	bs^=key;
 	bitset<32> ct;	
-	shuffle(bs,ct);
+	sbox(bs,ct);
 	return ct;
 }
 
-Function for Decryption
+//Function for Decryption
 bitset<32> decrypt(bitset<32> input, bitset<32> key)
 {
 	bitset<32> bs;
-	shuffle(input,bs);
+	sbox(input,bs);
 	key.flip();
 	bs^=key;
 	bitset<32> pt;	
-	shuffle(bs,pt);
+	pbox(bs,pt);
 	return pt;
 }
-**/
+
 
 void result(int choice, bitset<32> key)
 {
@@ -95,7 +137,7 @@ void result(int choice, bitset<32> key)
 	    cout<< "Enter the plain text: ";
 		cin>>a;
 		bitset<32> arr(a);
-		cout<< "\nCipher Text: " << cryptofy(arr, key);
+		cout<< "\nCipher Text: " << encrypt(arr, key);
 	}
 
 	else if (choice ==2)
@@ -104,7 +146,7 @@ void result(int choice, bitset<32> key)
 		cout<< "Enter the cipher text: ";
 		cin>>cipherText;
 		bitset<32> ct(cipherText);
-		cout<< "\nPlain Text: " << (int)(cryptofy(ct, key).to_ulong());
+		cout<< "\nPlain Text: " << (int)(decrypt(ct, key).to_ulong());
 	}
 
 	else if (choice == 7)
