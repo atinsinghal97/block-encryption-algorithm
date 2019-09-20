@@ -123,8 +123,8 @@ void result(int choice, bitset<32> key)
 	    cout<< "Enter the plain text: ";
 		cin>>a;
 		
-		if (a.length()<4)
-		    for (int i=0; i<4-a.length(); i++)
+		if (a.length()%4!=0)
+		    for (int i=0; i<4-(a.length()%4); i++)
 		        a+="x";
 
 		//shifting characters by a fixed value
@@ -136,7 +136,7 @@ void result(int choice, bitset<32> key)
 
 		a=strToBinary(a);
 		bitset<32> arr(a);
-		cout<<arr;
+		//cout<<arr;
 		cout<< "\nCipher Text: " << cryptofy(arr, key);
 	}
 
