@@ -104,6 +104,9 @@ string strToBinary(string s)
                        bin.push_back('0'); 
             val /= 2; 
         } 
+        if (bin.length()<8)
+            for (int i=0; i<8-bin.length(); i++)
+                bin+='0';
         reverse(bin.begin(), bin.end()); 
   
         cout << bin << " ";
@@ -119,6 +122,10 @@ void result(int choice, bitset<32> key)
 	    string a;
 	    cout<< "Enter the plain text: ";
 		cin>>a;
+		
+		if (a.length()<4)
+		    for (int i=0; i<4-a.length(); i++)
+		        a+="x";
 
 		//shifting characters by a fixed value
 		for (int i=0; i<a.length(); i++)
@@ -138,23 +145,52 @@ void result(int choice, bitset<32> key)
 		string cipherText;
 		cout<< "Enter the cipher text: ";
 		cin>>cipherText;
+		
 		bitset<32> ct(cipherText);
 		
 		//Convert Binary output to ASCII then ASCII to char
-		cout<< "\nPlain Text: " << (cryptofy(ct, key).to_string());     //BINARY
+		string intermediate= (cryptofy(ct, key).to_string());
+		//cout<< "\nPlain Text: " << intermediate;        //BINARY
 		
 		//break into 8-bit pairs, then convert to ascii, followed by char
-		cout<< "\nPlain Text: " << (int)(cryptofy(ct, key).to_ulong()); //ASCII
-		cout<< "\n" << (char)(cryptofy(ct, key).to_ulong()); //CHAR
-
+		string intermediate1 = intermediate.substr(0, 8);       //BINARY
+		string intermediate2 = intermediate.substr(8, 8);
+		string intermediate3 = intermediate.substr(16, 8);
+		string intermediate4 = intermediate.substr(24, 8);
+		
+		bitset<8> i1(intermediate1);          //BINARY
+		bitset<8> i2(intermediate2);
+		bitset<8> i3(intermediate3);
+		bitset<8> i4(intermediate4);
+		//cout<<endl<<i1<<endl<<i2<<endl<<i3<<endl<<i4;
+		
+		//cout<< "\nPlain Text: " << (int)(cryptofy(ct, key).to_ulong()); //ASCII
+		char ascii1= (char)((i1.to_ulong())+256-7)%256;
+		char ascii2= (char)((i2.to_ulong())+256-7)%256;
+		char ascii3= (char)((i3.to_ulong())+256-7)%256;
+		char ascii4= (char)((i4.to_ulong())+256-7)%256;
+		//cout<<endl<<"1:"<<ascii1<<endl<<"2:"<<ascii2<<endl<<"3:"<<ascii3<<endl<<"4:"<<ascii4;
+		
+		string a[4];
+		a[0]=ascii1;
+		a[1]=ascii2;
+		a[2]=ascii3;
+		a[3]=ascii4;
+		cout<< "\nPlain Text: " << ascii1 <<ascii2 <<ascii3 <<ascii4;
+		/**
+		//cout<< "\n" << (char)(cryptofy(ct, key).to_ulong()); //CHAR
+        //a=(char)(cryptofy(ct, key).to_ulong());
+        
 		//Reversing the effect of the shift
-		for (int i=0; i<a.length(); i++)
+		for (int i=0; i<4; i++)
 		{
-			if ((int)a[i]<7)
-        		a+=256;
+			//if ((int)a[i]<7)
+        	a[i]+=256;
     		a[i]-=7;
     		a[i]=(char)(a[i]%256);		//ASCII characters limit
 		}
+		cout<< "\nPlain Text: " << a;
+		**/
 	}
 
 	else if (choice == 7)
