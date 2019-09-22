@@ -144,38 +144,65 @@ void result(int choice, bitset<32> key)
 
 	else if (choice ==2)
 	{
-		string cipherText;
-		cout<< "Enter the cipher text: ";
-		cin>>cipherText;
+		ifstream filein("cipher.txt"); //taking file as inputstream
+   		string cipherText;
+
+   		//ofstream fileout("cipher.txt", ios::out | ios::binary);
+   		ofstream fileout("plain.txt");
+   		if(!fileout) {
+      		cout << "Cannot open file!" << endl;
+      		exit (0);
+   		}
+
+   		if(filein) {
+      		ostringstream ss;
+      		ss << filein.rdbuf(); // reading data
+      		cipherText = ss.str();
+   		}
+   		else
+   		{
+   			cout<< "Error opening file";
+   			exit (0);
+   		}
 		
-		bitset<32> ct(cipherText);
-		
-		//Convert Binary output to ASCII then ASCII to char
-		string intermediate= (cryptofy(ct, key).to_string());
-		//cout<< "\nPlain Text: " << intermediate;        //BINARY
-		
-		//break into 8-bit pairs, then convert to ascii, followed by char
-		string intermediate1 = intermediate.substr(0, 8);       //BINARY
-		string intermediate2 = intermediate.substr(8, 8);
-		string intermediate3 = intermediate.substr(16, 8);
-		string intermediate4 = intermediate.substr(24, 8);
-		
-		bitset<8> i1(intermediate1);          //BINARY
-		bitset<8> i2(intermediate2);
-		bitset<8> i3(intermediate3);
-		bitset<8> i4(intermediate4);
-		
-		char ascii1= (char)((i1.to_ulong())+256-7)%256;
-		char ascii2= (char)((i2.to_ulong())+256-7)%256;
-		char ascii3= (char)((i3.to_ulong())+256-7)%256;
-		char ascii4= (char)((i4.to_ulong())+256-7)%256;
-		
-		string a[4];
-		a[0]=ascii1;
-		a[1]=ascii2;
-		a[2]=ascii3;
-		a[3]=ascii4;
-		cout<< "\nPlain Text: " << ascii1 <<ascii2 <<ascii3 <<ascii4;
+		string intermediate, intermediate1, intermediate2, intermediate3, intermediate4;
+		bitset<8> i1, i2, i3, i4;
+		char ascii1, ascii2, ascii3, ascii4;
+		bitset<32> ct;
+		int start=0;
+
+		while ((cipherText.length()>=32) && (start <= cipherText.length()-32))
+		{
+			//bitset<32> ct(cipherText);
+			intermediate= cipherText.substr(start, 32);
+			ct = (bitset<32>) intermediate;
+
+			//Convert Binary output to ASCII then ASCII to char
+			intermediate= (cryptofy(ct, key).to_string());
+			//cout<< "\nPlain Text: " << intermediate;        //BINARY
+			
+			//break into 8-bit pairs, then convert to ascii, followed by char
+			intermediate1 = intermediate.substr(0, 8);       //BINARY
+			intermediate2 = intermediate.substr(8, 8);
+			intermediate3 = intermediate.substr(16, 8);
+			intermediate4 = intermediate.substr(24, 8);
+			
+			i1= (bitset<8>) intermediate1;          //BINARY
+			i2= (bitset<8>) intermediate2;
+			i3= (bitset<8>) intermediate3;
+			i4= (bitset<8>) intermediate4;
+			
+			ascii1= (char)((i1.to_ulong())+256-7)%256;
+			ascii2= (char)((i2.to_ulong())+256-7)%256;
+			ascii3= (char)((i3.to_ulong())+256-7)%256;
+			ascii4= (char)((i4.to_ulong())+256-7)%256;
+			
+			fileout << ascii1 <<ascii2 <<ascii3 <<ascii4;
+			start+=32;
+		}
+
+		filein.close();
+		fileout.close();
 	}
 
 	else if (choice == 7)
