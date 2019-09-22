@@ -104,9 +104,12 @@ string strToBinary(string s)
                        bin.push_back('0'); 
             val /= 2; 
         } 
-        if (bin.length()<8)
+        /**if (bin.length()<8)
             for (int i=0; i<8-bin.length(); i++)
-                bin+='0';
+                bin+='0';**/
+        while (bin.length()<8)
+            bin+='0';
+        
         reverse(bin.begin(), bin.end()); 
   
         cout << bin << " ";
@@ -123,9 +126,13 @@ void result(int choice, bitset<32> key)
 	    cout<< "Enter the plain text: ";
 		cin>>a;
 		
-		if (a.length()%4!=0)
+		/**if (a.length()%4!=0)
 		    for (int i=0; i<4-(a.length()%4); i++)
-		        a+="x";
+	        {   a+="x";
+		        cout<<a;
+	        }**/
+	    while (a.length()%4!=0)
+	        a+="x";
 
 		//shifting characters by a fixed value
 		for (int i=0; i<a.length(); i++)
