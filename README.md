@@ -1,4 +1,4 @@
-# CSE539-Block-Encryption-Algorithm
+# Block-Encryption-Algorithm
 
 **Objectives**
 - Develop a (reversible) 32-bit block encryption algorithm
